@@ -15,10 +15,10 @@ Method: POST
 Params: username, password  
 Return: user_id, authenticator  
 - Logout
-URL: /user/logout/
+URL: /user/logout/  
 Method: POST  
 Params: authenticator  
-Return: None
+Return: None  
 
 ### Event
 - Create Event (simple event model for now)
@@ -28,7 +28,7 @@ Params: name, authenticator
 Return: None  
 
 - Get all Events
-URL: /events/
+URL: /events/  
 Method: POST  
 Params: authenticator  
 Return: list of events created by the user  
