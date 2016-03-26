@@ -12,7 +12,7 @@ auth_invalid = 'invalid authenticator'
 user_not_exist = 'user not exit'
 # Create your views here.
 def index(request):
-	return HttpResponse('index page of the webservice for cs4720 final project.')
+	return _success_response(request,'index page of the webservice for cs4720 final project.')
 
 def create_user(request):
 	_check_post(request)
