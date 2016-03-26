@@ -4,30 +4,30 @@ The APIs are hosted at https://cs4720-webservice.herokuapp.com/
 ## APIs
 
 ### Authentication
-- Create User
+- Create User  
 URL: /user/new/  
 Method: POST  
 Params: username, password  
 Return: user_id, authenticator  
-- Login
+- Login  
 URL: /user/login/  
 Method: POST
 Params: username, password  
 Return: user_id, authenticator  
-- Logout
+- Logout  
 URL: /user/logout/  
 Method: POST  
 Params: authenticator  
 Return: None  
 
 ### Event
-- Create Event (simple event model for now)
+- Create Event (simple event model for now)  
 URL: /events/new/  
 Method: POST  
 Params: name, authenticator  
 Return: None  
 
-- Get all Events
+- Get all Events  
 URL: /events/  
 Method: POST  
 Params: authenticator  
