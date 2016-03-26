@@ -15,8 +15,8 @@ def index(request):
 	return _success_response(request,'index page of the webservice for cs4720 final project.')
 
 def create_user(request):
-	_check_post(request)
-	user_form = UserForm(request.POST)
+	post = _check_post(request)
+	user_form = UserForm(post)
 	if user_form.is_valid():
 		user = user_form.save()
 	else:
@@ -26,17 +26,15 @@ def create_user(request):
 	return _success_response(request,rsp)
 
 def login(request):
-	_check_post(request)
-	post = request.POST
+	post = _check_post(request)
 	valid_input = 'username' in post and 'password' in post
 	if not valid_input:
 		return _error_response(request, missing_field)
 	username = post['username']
 	password = post['password']
-	try:
-		user = User.objects.get(username = username)
-	except:
-		return _error_response(request, "User not found.")
+	user = _get_user_by_username(request, username)
+	if not user:
+		return _error_response(request, user_not_exist)
 	is_correct = hashers.check_password(password, user.password)
 	if is_correct:
 		authenticator = _create_authenticator(user.id)
@@ -45,8 +43,7 @@ def login(request):
 		return _error_response(request, "Username and password do not match.")
 
 def logout(request):
-	_check_post(request)
-	post = request.POST
+	post = _check_post(request)
 	if 'authenticator' not in post:
 		return _error_response(request, missing_field)
 	authenticator = post['authenticator']
@@ -66,7 +63,11 @@ def create_event(request):
 	authenticator = post['authenticator']
 
 	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
 	user = _get_user(request, user_id)
+	if not user:
+		return _error_response(request, user_not_exist)
 	event = Event(name=name, user=user)
 	try:
 		event.save()
@@ -81,7 +82,11 @@ def get_all_event(request):
 		return _error_response(request, missing_field)
 	authenticator = post['authenticator']
 	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
 	user = _get_user(request, user_id)
+	if not user:
+		return _error_response(request, user_not_exist)
 	events = Event.objects.filter(user=user)
 	rsp = {'events':[]}
 	for event in events:
@@ -90,26 +95,31 @@ def get_all_event(request):
 	return _success_response(request, rsp)
 
 def error(request):
-	return _error_response(request, 'api not exist.')
+	return _error_response(request, 'api does not exist.')
 
 def _get_event(request, event_id):
 	pass
 
-def _get_user(request, user_id):
+def _get_user_by_id(request, user_id):
 	try:
 		user = User.objects.get(pk=user_id)
 		return user
 	except:
-		return _error_response(request, user_not_exist)
+		return False
 
+def _get_user_by_username(request, username):
+	try:
+		user = User.objects.get(username=username)
+		return user
+	except:
+		return False
 
 def _validate(request, authenticator):
 	try:
 		auth = Authenticator.objects.get(authenticator = authenticator)
 		return auth.user_id
 	except:
-		return _error_response(request, auth_invalid)
-
+		return False
 
 def _check_post(request):
 	if not request.method == 'POST':
@@ -122,7 +132,6 @@ def _create_authenticator(user_id):
 		return auth.authenticator
 	except:
 		pass
-
 	authenticator =	base64.b64encode(os.urandom(32)).decode('utf-8')
 	auth = Authenticator(authenticator=authenticator, user_id=user_id)
 	auth.save()
