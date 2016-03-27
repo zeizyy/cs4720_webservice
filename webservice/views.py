@@ -94,6 +94,9 @@ def get_all_event(request):
 		rsp['events'].append(e)
 	return _success_response(request, rsp)
 
+def sync_events(request):
+	pass
+
 def error(request):
 	return _error_response(request, 'api does not exist.')
 
@@ -141,4 +144,4 @@ def _error_response(request, error_msg = None):
 	return JsonResponse({'ok': False, 'error':error_msg})
 
 def _success_response(request, rsp = None):
-	return JsonResponse({'ok':True, 'rep':rsp})
+	return JsonResponse({'ok':True, 'rsp':rsp})
