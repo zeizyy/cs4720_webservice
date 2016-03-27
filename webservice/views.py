@@ -16,6 +16,8 @@ def index(request):
 
 def create_user(request):
 	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
 	user_form = UserForm(post)
 	if user_form.is_valid():
 		user = user_form.save()
@@ -27,6 +29,8 @@ def create_user(request):
 
 def login(request):
 	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
 	valid_input = 'username' in post and 'password' in post
 	if not valid_input:
 		return _error_response(request, missing_field)
@@ -44,6 +48,8 @@ def login(request):
 
 def logout(request):
 	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
 	if 'authenticator' not in post:
 		return _error_response(request, missing_field)
 	authenticator = post['authenticator']
@@ -56,6 +62,8 @@ def logout(request):
 
 def create_event(request):
 	post =_check_post(request)
+	if not post:
+		return _error_response(request, error_post)
 	valid_input = 'name' in post and 'authenticator' in post
 	if not valid_input:
 		return _error_response(request, missing_field)
@@ -77,6 +85,8 @@ def create_event(request):
 
 def get_all_event(request):
 	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
 	valid_input = 'authenticator' in post
 	if not valid_input:
 		return _error_response(request, missing_field)
@@ -126,7 +136,7 @@ def _validate(request, authenticator):
 
 def _check_post(request):
 	if not request.method == 'POST':
-		return _error_response(request, error_post)
+		return False
 	return request.POST
 
 def _create_authenticator(user_id):
@@ -144,4 +154,4 @@ def _error_response(request, error_msg = None):
 	return JsonResponse({'ok': False, 'error':error_msg})
 
 def _success_response(request, rsp = None):
-	return JsonResponse({'ok':True, 'rsp':rsp})
+	return JsonResponse({'ok':True, 'requestp':rsp})
