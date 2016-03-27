@@ -154,4 +154,4 @@ def _error_response(request, error_msg = None):
 	return JsonResponse({'ok': False, 'error':error_msg})
 
 def _success_response(request, rsp = None):
-	return JsonResponse({'ok':True, 'requestp':rsp})
+	return JsonResponse({'ok':True, 'rsp':rsp})
