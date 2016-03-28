@@ -8,5 +8,5 @@ class UserForm(forms.ModelForm):
 		# fields = ['username', 'password']
 		exclude = []
 
-
+class loginForm(forms.Form)
 

@@ -32,9 +32,9 @@ def login(request):
 	if not post:
 		return _error_response(request, error_post)
 	error = {}
-	if 'username' not in post or not error['username']:
+	if 'username' not in post:
 		error['username'] = ["This field is required."]
-	if 'password' not in post or not error['password']:
+	if 'password' not in post:
 		error['password'] = ["This field is required."]
 	if error:
 		return _error_response(request, error)
