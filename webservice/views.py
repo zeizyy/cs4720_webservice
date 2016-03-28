@@ -152,10 +152,11 @@ def _create_authenticator(user_id):
 	auth.save()
 	return authenticator
 
-def _error_response(request, error_msg = None):
-	return JsonResponse({'ok': False, 'error':error_msg})
+def _error_response(request, error = None):
+	if isinstance(error, str):
+		error = {"single_error":error}
+	return JsonResponse({'ok': False, 'error':error})
 
 def _success_response(request, rsp = None):
-	if isinstance(rsp, str):
-		rsp = ["single_error":rsp]
 	return JsonResponse({'ok':True, 'rsp':rsp})
+
