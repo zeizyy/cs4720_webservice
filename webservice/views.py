@@ -31,9 +31,11 @@ def login(request):
 	post = _check_post(request)
 	if not post:
 		return _error_response(request, error_post)
-	valid_input = 'username' in post and 'password' in post
-	if not valid_input:
-		return _error_response(request, missing_field)
+	user_form = UserForm(post)
+	if user_form.is_valid():
+		user = user_form.save()
+	else:
+		return _error_response(request, user_form.errors)
 	username = post['username']
 	password = post['password']
 	user = _get_user_by_username(request, username)
@@ -154,4 +156,6 @@ def _error_response(request, error_msg = None):
 	return JsonResponse({'ok': False, 'error':error_msg})
 
 def _success_response(request, rsp = None):
+	if isinstance(rsp, str):
+		rsp = ["single_error":rsp]
 	return JsonResponse({'ok':True, 'rsp':rsp})
