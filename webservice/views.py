@@ -31,11 +31,13 @@ def login(request):
 	post = _check_post(request)
 	if not post:
 		return _error_response(request, error_post)
-	user_form = UserForm(post)
-	if user_form.is_valid():
-		user = user_form.save()
-	else:
-		return _error_response(request, user_form.errors)
+	error = {}
+	if 'username' not in post:
+		error['username'] = ["This field is required."]
+	if 'password' not in post:
+		error['password'] = ["This field is required."]
+	if error:
+		return _error_response(request, error)
 	username = post['username']
 	password = post['password']
 	user = _get_user_by_username(request, username)
