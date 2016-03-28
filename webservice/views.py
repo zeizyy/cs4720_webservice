@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from webservice.forms import UserForm
+from webservice.forms import UserForm, LoginForm
 from webservice.models import User, Authenticator, Event
 from django.contrib.auth import hashers
 import base64, os
@@ -31,13 +31,9 @@ def login(request):
 	post = _check_post(request)
 	if not post:
 		return _error_response(request, error_post)
-	error = {}
-	if 'username' not in post:
-		error['username'] = ["This field is required."]
-	if 'password' not in post:
-		error['password'] = ["This field is required."]
-	if error:
-		return _error_response(request, error)
+	login_form = LoginForm(post)
+	if not login_form.is_valid():
+		return _error_response(request, login_form.errors)
 	username = post['username']
 	password = post['password']
 	user = _get_user_by_username(request, username)
