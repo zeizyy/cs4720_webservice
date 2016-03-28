@@ -64,3 +64,6 @@ db.sqlite3
 
 # Virtual Env
 venv/
+
+# Easier with Heroku
+settings.py
