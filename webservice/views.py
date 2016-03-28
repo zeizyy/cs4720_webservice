@@ -22,7 +22,7 @@ def create_user(request):
 	if user_form.is_valid():
 		user = user_form.save()
 	else:
-		return _error_response(request, missing_field)
+		return _error_response(request, user_form.errors)
 	authenticator = _create_authenticator(user.id)
 	rsp = {'user_id':user.id, 'authenticator':authenticator}
 	return _success_response(request,rsp)
