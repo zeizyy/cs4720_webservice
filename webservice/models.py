@@ -28,11 +28,28 @@ class Authenticator(models.Model):
 
 
 class Event(models.Model):
+    UUID = models.CharField(max_length=36, primary_key=True)
     name = models.CharField(max_length=100)
-    detail = models.TextField()
+    location = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    weekday = models.IntegerField()
     last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+class Todo(models.Model):
+    UUID = models.CharField(max_length=36, primary_key=True)
+    name = models.CharField(max_length=100)
+    note = models.CharField(max_length=200)
+    due_datetime = models.DateTimeField()
+    last_modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+

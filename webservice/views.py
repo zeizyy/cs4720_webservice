@@ -1,9 +1,10 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from webservice.forms import UserForm, LoginForm
+from webservice.forms import UserForm, LoginForm, EventForm
 from webservice.models import User, Authenticator, Event
 from django.contrib.auth import hashers
-import base64, os
+from django.forms.models import model_to_dict
+import base64, os, uuid
 
 error_post = 'only post request is accepted.'
 error_get = 'only get request is accepted.'
@@ -64,23 +65,23 @@ def create_event(request):
 	post =_check_post(request)
 	if not post:
 		return _error_response(request, error_post)
-	valid_input = 'name' in post and 'authenticator' in post
-	if not valid_input:
-		return _error_response(request, missing_field)
-	name = post['name']
+	event_form = EventForm(post)
+	if not event_form.is_valid():
+		return _error_response(request, event_form.errors)
+	event = event_form.save(commit=False)
 	authenticator = post['authenticator']
-
 	user_id = _validate(request, authenticator)
 	if not user_id:
 		return _error_response(request, auth_invalid)
-	user = _get_user(request, user_id)
+	user = _get_user_by_id(request, user_id)
 	if not user:
 		return _error_response(request, user_not_exist)
-	event = Event(name=name, user=user)
+	event.user = user
+	event.UUID = str(uuid.uuid4())
 	try:
 		event.save()
 	except:
-		return _error_response(request, 'cannot save event')
+		return _error_response(request, 'event cannot be saved')
 	return _success_response(request)
 
 def get_all_event(request):
@@ -94,15 +95,12 @@ def get_all_event(request):
 	user_id = _validate(request, authenticator)
 	if not user_id:
 		return _error_response(request, auth_invalid)
-	user = _get_user(request, user_id)
+	user = _get_user_by_id(request, user_id)
 	if not user:
 		return _error_response(request, user_not_exist)
 	events = Event.objects.filter(user=user)
-	rsp = {'events':[]}
-	for event in events:
-		e = {'name':event.name, 'last_modified':event.last_modified}
-		rsp['events'].append(e)
-	return _success_response(request, rsp)
+	events = map(model_to_dict, events)
+	return _success_response(request, events)
 
 def sync_events(request):
 	pass
