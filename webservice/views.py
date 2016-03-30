@@ -99,7 +99,7 @@ def get_all_event(request):
 	if not user:
 		return _error_response(request, user_not_exist)
 	events = Event.objects.filter(user=user)
-	events = map(model_to_dict, events)
+	events = list(map(model_to_dict, events))
 	return _success_response(request, events)
 
 def sync_events(request):
