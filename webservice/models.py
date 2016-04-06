@@ -33,9 +33,8 @@ class Event(models.Model):
     location = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    weekday = models.IntegerField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
