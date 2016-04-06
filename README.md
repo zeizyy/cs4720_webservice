@@ -18,14 +18,16 @@ Return: user_id, authenticator
 URL: /user/logout/  
 Method: POST  
 Params: authenticator  
-Return: None  
+Return: Success  
 
 ### Event
-- Create Event (simple event model for now)  
+- Create Event
 URL: /events/new/  
 Method: POST  
-Params: name, authenticator  
-Return: None  
+Params: name, authenticator, category, location, start_time, end_time  
+Note: start_time and end_time should be in 'YYYY-MM-DD HH:MM:SS.mmmmmm' (2016-04-06 15:30:51.539410)
+or 'YYYY-MM-DD HH:MM:SS' (2016-04-06 15:30:51)  
+Return: Success  
 
 - Get all Events  
 URL: /events/  
