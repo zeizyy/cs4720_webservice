@@ -82,7 +82,7 @@ def create_event(request):
 	event.save()
 	# except:
 	# 	return _error_response(request, 'event cannot be saved')
-	return _success_response(request,{"uuid":event.id})
+	return _success_response(request,{"uuid":event.UUID})
 
 def get_all_event(request):
 	post = _check_post(request)
