@@ -16,4 +16,4 @@ class EventForm(forms.ModelForm):
 	authenticator = forms.CharField(max_length=96)
 	class Meta:
 		model = Event
-		exclude = ['UUID', 'user']
+		exclude = ['user']

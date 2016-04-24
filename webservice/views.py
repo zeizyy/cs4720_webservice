@@ -77,7 +77,7 @@ def create_event(request):
 	if not user:
 		return _error_response(request, user_not_exist)
 	event.user = user
-	event.UUID = str(uuid.uuid4())
+	# event.UUID = str(uuid.uuid4())
 	# try:
 	event.save()
 	# except:
