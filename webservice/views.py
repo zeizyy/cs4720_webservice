@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from webservice.forms import UserForm, LoginForm, EventForm
+from webservice.forms import UserForm, LoginForm, EventForm, EventEditForm
 from webservice.models import User, Authenticator, Event
 from django.contrib.auth import hashers
 from django.forms.models import model_to_dict
@@ -82,6 +82,29 @@ def create_event(request):
 	event.save()
 	# except:
 	# 	return _error_response(request, 'event cannot be saved')
+	return _success_response(request,{"uuid":event.UUID})
+
+def edit_event(request):
+	post =_check_post(request)
+	if not post:
+		return _error_response(request, error_post)
+	
+	
+	# event = event_form.save(commit=False)
+	uuid = post['UUID']
+	try:
+		event = Event.objects.get(UUID=uuid)
+	except:
+		return _error_response(request, "event does not exist")
+	authenticator = post['authenticator']
+	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
+
+	event_form = EventEditForm(post, instance=event)
+	if not event_form.is_valid():
+		return _error_response(request, event_form.errors)
+	event_form.save()
 	return _success_response(request,{"uuid":event.UUID})
 
 def get_all_event(request):
