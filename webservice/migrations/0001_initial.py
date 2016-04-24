@@ -22,13 +22,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Event',
             fields=[
-                ('UUID', models.CharField(max_length=60, serialize=False, primary_key=True)),
+                ('UUID', models.CharField(max_length=36, serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
                 ('location', models.CharField(max_length=100)),
                 ('category', models.CharField(max_length=100)),
-                ('start_time', models.TimeField()),
-                ('end_time', models.TimeField()),
-                ('weekday', models.IntegerField()),
+                ('start_time', models.DateTimeField()),
+                ('end_time', models.DateTimeField()),
+                ('last_modified', models.DateTimeField(auto_now=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Todo',
+            fields=[
+                ('UUID', models.CharField(max_length=36, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('note', models.CharField(max_length=200)),
+                ('due_datetime', models.DateTimeField()),
                 ('last_modified', models.DateTimeField(auto_now=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
             ],
