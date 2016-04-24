@@ -45,7 +45,7 @@ def login(request):
 		authenticator = _create_authenticator(user.id)
 		return _success_response(request, {"user_id":user.id, "authenticator":authenticator})
 	else:
-		return _error_response(request, "Username and password do not match.")
+		return _error_response(request, "Logins do not match.")
 
 def logout(request):
 	post = _check_post(request)
@@ -82,7 +82,7 @@ def create_event(request):
 	event.save()
 	# except:
 	# 	return _error_response(request, 'event cannot be saved')
-	return _success_response(request)
+	return _success_response(request,{"uuid":event.id})
 
 def get_all_event(request):
 	post = _check_post(request)
