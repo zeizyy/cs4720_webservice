@@ -78,10 +78,10 @@ def create_event(request):
 		return _error_response(request, user_not_exist)
 	event.user = user
 	event.UUID = str(uuid.uuid4())
-	try:
-		event.save()
-	except:
-		return _error_response(request, 'event cannot be saved')
+	# try:
+	event.save()
+	# except:
+	# 	return _error_response(request, 'event cannot be saved')
 	return _success_response(request)
 
 def get_all_event(request):
