@@ -5,6 +5,7 @@ from webservice.models import User, Authenticator, Event
 from django.contrib.auth import hashers
 from django.forms.models import model_to_dict
 import base64, os, uuid
+import datetime
 
 error_post = 'only post request is accepted.'
 error_get = 'only get request is accepted.'
@@ -124,6 +125,39 @@ def get_all_event(request):
 	events = Event.objects.filter(user=user)
 	events = list(map(model_to_dict, events))
 	return _success_response(request, events)
+
+def sync_event(request):
+	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
+	edit_form = EventEditForm(post)
+	if not edit_form.is_valid():
+		return _error_response(request, edit_form.errors)
+	valid_input = 'authenticator' in post
+	authenticator = post['authenticator']
+	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
+	user = _get_user_by_id(request, user_id)
+	uuid = post["UUID"]
+	# name = edit_form.cleaned_data["name"]
+	# category = edit_form.cleaned_data["category"]
+	# location = edit_form.cleaned_data["location"]
+	# star_time = edit_form.cleaned_data["star_time"]
+	# end_time = edit_form.cleaned_data["end_time"]
+	try:
+		event = Event.objects.get(UUID=uuid)
+		# return _success_response(request, model_to_dict(event))
+		event_form = EventEditForm(post, instance=event)
+	except:
+		event_form = EventEditForm(post)
+		# return HttpResponse(post)
+	event = event_form.save(commit=False)
+	event.user = user
+	event.created = datetime.datetime.now()
+	event.UUID = uuid
+	event.save()
+	return _success_response(request, event.UUID)
 
 def sync_events(request):
 	pass
