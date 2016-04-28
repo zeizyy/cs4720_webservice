@@ -124,7 +124,18 @@ def get_all_event(request):
 		return _error_response(request, user_not_exist)
 	events = Event.objects.filter(user=user)
 	events = list(map(model_to_dict, events))
+	for event in events:
+		start_time = event['start_time']
+		event['start_time'] = to_normal(start_time)
+		end_time = event['end_time']
+		event['end_time'] = to_normal(end_time)
 	return _success_response(request, events)
+
+def to_normal(tztime):
+	tztime = str(tztime)
+	date = tztime[:10]
+	time = tztime[11:19]
+	return date+" "+time
 
 def get_all_todo(request):
 	post = _check_post(request)
@@ -142,6 +153,11 @@ def get_all_todo(request):
 		return _error_response(request, user_not_exist)
 	todos = Todo.objects.filter(user=user)
 	todos = list(map(model_to_dict, todos))
+	for todo in todos:
+		start_time = todo['due_datetime']
+		todo['due_datetime'] = to_normal(start_time)
+		end_time = todo['reminder_datetime']
+		todo['reminder_datetime'] = to_normal(end_time)
 	return _success_response(request, todos)
 
 def sync_event(request):
