@@ -146,7 +146,10 @@ def purge_event(request):
 	user_id = _validate(request, authenticator)
 	if not user_id:
 		return _error_response(request, auth_invalid)
-	events = Event.objects.all()
+	user = _get_user_by_id(request, user_id)
+	if not user:
+		return _error_response(request, user_not_exist)
+	events = Event.objects.filter(user=user)
 	for event in events:
 		event.delete()
 	return _success_response(request, "success")
@@ -183,7 +186,10 @@ def purge_todo(request):
 	user_id = _validate(request, authenticator)
 	if not user_id:
 		return _error_response(request, auth_invalid)
-	todos = Todo.objects.all()
+	user = _get_user_by_id(request, user_id)
+	if not user:
+		return _error_response(request, user_not_exist)
+	todos = Todo.objects.filter(user=user)
 	for todo in todos:
 		todo.delete()
 	return _success_response(request, "success")
