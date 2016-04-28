@@ -160,6 +160,20 @@ def get_all_todo(request):
 		todo['reminder_datetime'] = to_normal(end_time)
 	return _success_response(request, todos)
 
+def purge_todo(request):
+	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
+	valid_input = 'authenticator' in post
+	authenticator = post['authenticator']
+	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
+	todos = Todo.objects.all()
+	for todo in todos:
+		todo.delete()
+	return _success_response(request, "success")
+
 def sync_event(request):
 	post = _check_post(request)
 	if not post:
