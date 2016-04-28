@@ -1,5 +1,5 @@
 from django import forms
-from webservice.models import User, Event
+from webservice.models import User, Event, Todo
 
 
 class UserForm(forms.ModelForm):
@@ -23,4 +23,11 @@ class EventEditForm(forms.ModelForm):
 	UUID = forms.CharField(max_length=96)
 	class Meta:
 		model = Event
+		exclude = ['UUID','user']
+
+class TodoEditForm(forms.ModelForm):
+	authenticator = forms.CharField(max_length=96)
+	UUID = forms.CharField(max_length=96)
+	class Meta:
+		model = Todo
 		exclude = ['UUID','user']

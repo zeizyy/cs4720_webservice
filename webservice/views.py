@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.http import JsonResponse
-from webservice.forms import UserForm, LoginForm, EventForm, EventEditForm
-from webservice.models import User, Authenticator, Event
+from webservice.forms import UserForm, LoginForm, EventForm, EventEditForm, TodoEditForm
+from webservice.models import User, Authenticator, Event, Todo
 from django.contrib.auth import hashers
 from django.forms.models import model_to_dict
 import base64, os, uuid
@@ -126,6 +126,24 @@ def get_all_event(request):
 	events = list(map(model_to_dict, events))
 	return _success_response(request, events)
 
+def get_all_todo(request):
+	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
+	valid_input = 'authenticator' in post
+	if not valid_input:
+		return _error_response(request, missing_field)
+	authenticator = post['authenticator']
+	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
+	user = _get_user_by_id(request, user_id)
+	if not user:
+		return _error_response(request, user_not_exist)
+	todos = Todo.objects.filter(user=user)
+	todos = list(map(model_to_dict, todos))
+	return _success_response(request, todos)
+
 def sync_event(request):
 	post = _check_post(request)
 	if not post:
@@ -140,11 +158,6 @@ def sync_event(request):
 		return _error_response(request, auth_invalid)
 	user = _get_user_by_id(request, user_id)
 	uuid = post["UUID"]
-	# name = edit_form.cleaned_data["name"]
-	# category = edit_form.cleaned_data["category"]
-	# location = edit_form.cleaned_data["location"]
-	# star_time = edit_form.cleaned_data["star_time"]
-	# end_time = edit_form.cleaned_data["end_time"]
 	try:
 		event = Event.objects.get(UUID=uuid)
 		# return _success_response(request, model_to_dict(event))
@@ -159,8 +172,33 @@ def sync_event(request):
 	event.save()
 	return _success_response(request, event.UUID)
 
-def sync_events(request):
-	pass
+def sync_todo(request):
+	post = _check_post(request)
+	if not post:
+		return _error_response(request, error_post)
+	edit_form = TodoEditForm(post)
+	if not edit_form.is_valid():
+		return _error_response(request, edit_form.errors)
+	valid_input = 'authenticator' in post
+	authenticator = post['authenticator']
+	user_id = _validate(request, authenticator)
+	if not user_id:
+		return _error_response(request, auth_invalid)
+	user = _get_user_by_id(request, user_id)
+	uuid = post["UUID"]
+	try:
+		todo = Todo.objects.get(UUID=uuid)
+		# return _success_response(request, model_to_dict(event))
+		todo_form = TodoEditForm(post, instance=todo)
+	except:
+		todo_form = TodoEditForm(post)
+		# return HttpResponse(post)
+	todo = todo_form.save(commit=False)
+	todo.user = user
+	todo.created = datetime.datetime.now()
+	todo.UUID = uuid
+	todo.save()
+	return _success_response(request, todo.UUID)
 
 def error(request):
 	return _error_response(request, 'api does not exist.')

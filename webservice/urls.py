@@ -10,5 +10,7 @@ urlpatterns = [
     url(r'^events/edit/$', views.edit_event, name = 'EditEvent'),
     url(r'^events/sync/$', views.sync_event, name = 'SyncEvent'),
     url(r'^events/$', views.get_all_event, name = 'GetAllEvents'),
+    url(r'^todos/sync/$', views.sync_todo, name = 'SyncTodo'),
+    url(r'^todos/$', views.get_all_todo, name = 'GetAllTodos'),
     url(r'^', views.error, name = 'Error'),
 ]

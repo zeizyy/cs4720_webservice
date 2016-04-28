@@ -46,6 +46,8 @@ class Todo(models.Model):
     name = models.CharField(max_length=100)
     note = models.CharField(max_length=200)
     due_datetime = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reminder_datetime = models.DateTimeField(default=datetime.datetime.now())
     last_modified = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
